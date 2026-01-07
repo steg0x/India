@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guida di Viaggio India 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .nav-link.active {
+            background-color: #ea580c;
+            color: white;
+            font-weight: 600;
+        }
+        .nav-link:not(.active):hover {
+            background-color: #fed7aa;
+        }
+        .tab-button.active {
+            border-bottom-color: #f97316;
+            color: #f97316;
+            font-weight: 600;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        #back-to-top {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        /* Stile per la sidebar mobile */
+        #sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-40 border-b border-gray-200">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+             <div class="flex items-center gap-3">
+                <i class="fas fa-plane-departure text-2xl text-orange-600"></i>
+                <h1 class="text-2xl font-bold text-orange-600">India 2025</h1>
+            </div>
+            <button id="menu-btn" class="md:hidden text-2xl text-gray-700" aria-label="Apri menu">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Overlay per il menu mobile -->
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden md:hidden"></div>
+
+    <div class="container mx-auto flex flex-col md:flex-row px-4 py-6 gap-6">
+        <!-- Navigazione Laterale -->
+        <nav id="sidebar" class="w-64 md:w-1/4 bg-white p-4 rounded-r-xl md:rounded-xl shadow-lg fixed md:sticky left-0 top-0 md:top-24 h-full md:h-auto self-start -translate-x-full md:translate-x-0 z-50">
+            <div class="flex justify-between items-center md:hidden mb-4 border-b pb-2">
+                 <h2 class="text-lg font-semibold text-gray-700">Menu</h2>
+                 <button id="close-menu-btn" class="text-2xl text-gray-700" aria-label="Chiudi menu">
+                     <i class="fas fa-times"></i>
+                 </button>
+            </div>
+            <ul class="space-y-2" id="nav-links-container">
+                <!-- I link di navigazione verranno iniettati qui dal JavaScript -->
+            </ul>
+        </nav>
+
+        <!-- Contenuto Principale -->
+        <main id="main-content" class="w-full md:w-3/4">
+            <!-- Il contenuto delle pagine verrà iniettato qui dal JavaScript -->
+        </main>
+    </div>
+
+    <!-- Pulsante "Torna su" -->
+    <button id="back-to-top" class="bg-orange-600 text-white rounded-full p-3 shadow-lg hover:bg-orange-700 transition" aria-label="Torna in cima alla pagina">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white text-center p-4 mt-8">
+        <p>&copy; 2025 - Il Tuo Assistente di Viaggio per l'India. Buon viaggio!</p>
+    </footer>
+
+    <script>
+        // --- OGGETTO DATI PRINCIPALE ---
+        // Contiene tutte le informazioni per la guida di viaggio.
+        const travelData = {
+            home: {
+                title: "Benvenuti in India!",
+                images: {
+                    delhi: "https://images.unsplash.com/photo-1587474260584-136574528ed5?q=80&w=1170&auto=format&fit=crop",
+                    agra: "https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1170&auto=format&fit=crop",
+                    jaipur: "https://images.unsplash.com/photo-1603262110263-fb0112e797e4?q=80&w=1170&auto=format&fit=crop",
+                    pushkar: "https://images.unsplash.com/photo-1609621838510-805f422d0b04?q=80&w=1170&auto=format&fit=crop",
+                    udaipur: "https://images.unsplash.com/photo-1599539832439-1107c3873a5b?q=80&w=1170&auto=format&fit=crop",
+                    varanasi: "https://images.unsplash.com/photo-1561361522-589a5f35d5e7?q=80&w=1170&auto=format&fit=crop",
+                    darjeeling: "https://images.unsplash.com/photo-1626528142933-b958837915e2?q=80&w=1170&auto=format&fit=crop"
+                },
+                tips: [
+                    "Porta sempre con te una borraccia riutilizzabile per ridurre la plastica e rimanere idratato.",
+                    "Un saluto 'Namasté' con le mani giunte è un gesto di rispetto sempre apprezzato.",
+                    "Contratta sempre con un sorriso nei mercati, fa parte della cultura locale!",
+                    "Vesti in modo sobrio, specialmente quando visiti luoghi sacri, coprendo spalle e ginocchia.",
+                    "Assaggia lo street food nei posti affollati di gente del posto: è un segno di freschezza e qualità.",
+                    "Scarica le mappe offline sul tuo telefono. La connessione può essere instabile nei vicoli o in zone rurali."
+                ]
+            },
+            hotels: {
+                title: "I Tuoi Hotel",
+                icon: "🏨",
+                bookings: [
+                    { name: "bloomrooms @ Janpath", city: "Delhi", dates: "3 Ago - 4 Ago", mapLink: "https://maps.app.goo.gl/zh8qRsML7ZhHKp2k9", confirmation: "5824114484", pin: "3600", source: "Booking.com" },
+                    { name: "Umaid Bhawan - A Heritage Style Boutique Hotel", city: "Jaipur", dates: "4 Ago - 7 Ago", mapLink: "https://www.google.com/maps/place/Umaid+Bhawan-A+Royal+Heritage+Style+Boutique+Hotel/@26.9285319,75.7898473,1526m/data=!3m1!1e3!4m10!3m9!1s0x396db3f101f80fe7:0x5cb519814909d742!5m3!1s2025-07-31!4m1!1i2!8m2!3d26.9285271!4d75.7924276!16s%2Fg%2F1vs5v36y?entry=ttu&g_ep=EgoyMDI1MDcyNy4wIKXMDSoASAFQAw%3D%3D", confirmation: "6794283174", pin: "5068", source: "Booking.com" },
+                    { name: "Hotel Rising Star", city: "Pushkar", dates: "7 Ago - 10 Ago", mapLink: "https://maps.app.goo.gl/UXe8bWQ1sKYXxoSGA", confirmation: "6975425172", pin: "7977", source: "Booking.com" },
+                    { name: "Hostel Mantra", city: "Udaipur", dates: "10 Ago - 14 Ago", mapLink: "https://maps.app.goo.gl/6XXAztJTsU2VzsWRA", source: "HostelWorld", voucher: "301895-570111107/0", notes: "Pagamento di 10,441.25 ₹ ricevuto il 28/07/2025" },
+                    { name: "Wander Station Varanasi", city: "Varanasi", dates: "14 Ago - 17 Ago", mapLink: "https://maps.app.goo.gl/Uv7RcbfWkxv39S3ZA", confirmation: "5616683011", pin: "0216", source: "Booking.com" },
+                    { name: "UDAAN Himalayan Suites and Spa", city: "Darjeeling", dates: "17 Ago - 21 Ago", mapLink: "https://maps.app.goo.gl/cRA2yn9vQHMN67gZA", confirmation: "UHS0016857", bookingRef: "BEUHS0070124656", source: "Udaan" },
+                    { name: "Holiday Inn New Delhi Aerocity", city: "Delhi", dates: "21 Ago - 23 Ago", mapLink: "https://maps.app.goo.gl/fwxqWHZL8n2RdmYB7", confirmation: "677566664", source: "Email" }
+                ]
+            },
+            monuments: {
+                title: "Luoghi e Monumenti",
+                icon: "🏛️",
+                cities: [
+                    { name: "Delhi", places: ["Gurudwara Bangla Sahib", "Jama Masjid", "Forte Rosso (Lal Qila)", "Tempio del Loto", "Tomba di Humayun", "India Gate", "Qutub Minar", "Akshardham"] },
+                    { name: "Agra", places: ["Taj Mahal", "Forte di Agra", "Tomba di Itimad-ud-Daulah (Baby Taj)", "Mehtab Bagh", "Fatehpur Sikri"] },
+                    { name: "Jaipur", places: ["Forte Nahargarh", "City Palace, Jaipur", "Jantar Mantar, Jaipur", "Hawa Mahal", "Forte Amber", "Jal Mahal", "Galta Ji (Tempio delle Scimmie)", "Albert Hall Museum"] },
+                    { name: "Pushkar", places: ["Tempio di Savitri Mata", "Tempio di Brahma", "Lago di Pushkar", "Varaha Ghat", "Gurudwara Singh Sabha"] },
+                    { name: "Udaipur", places: ["Lago Pichola", "Bagore Ki Haveli", "Tempio Jagdish", "City Palace, Udaipur", "Saheliyon Ki Bari", "Monsoon Palace (Sajjangarh)", "Bahubali Hill", "Tempio di Eklingji"] },
+                    { name: "Varanasi", places: ["Dashashwamedh Ghat", "Assi Ghat", "Manikarnika Ghat", "Tempio d'Oro (Kashi Vishwanath)", "Sarnath", "Dhamek Stupa"] },
+                    { name: "Darjeeling", places: ["Himalayan Mountaineering Institute", "Padmaja Naidu Himalayan Zoological Park", "Happy Valley Tea Estate", "Batasia Loop", "Ghoom Monastery", "Japanese Peace Pagoda", "Tiger Hill"] }
+                ]
+            },
+            checklist: {
+                title: "Checklist di Viaggio",
+                icon: "✅",
+                categories: [
+                    { title: "Documenti Essenziali", items: ["Passaporto con validità residua", "Visto per l'India (stampato)", "Biglietti aerei e treni", "Prenotazioni hotel", "Fotocopie dei documenti", "Assicurazione di viaggio"] },
+                    { title: "Salute e Igiene", items: ["Kit medico di base (antidiarroico, antipiretico)", "Repellente per zanzare (forte)", "Disinfettante per le mani", "Crema solare e doposole", "Farmaci personali con prescrizione"] },
+                    { title: "Abbigliamento e Accessori", items: ["Abiti leggeri e traspiranti (cotone, lino)", "Foulard o scialle per coprire capo/spalle", "Impermeabile leggero o poncho", "Scarpe comode e sandali robusti", "Cappello e occhiali da sole", "Adattatore di corrente universale", "Power bank"] }
+                ]
+            },
+            phrasebook: {
+                title: "Frasario di Sopravvivenza",
+                icon: "🗣️",
+                categories: [
+                    { title: "Saluti e Convenevoli", phrases: [{it: "Ciao / Salve", hi: "Namasté"}, {it: "Grazie", hi: "Dhanyavād / Shukriyā"}, {it: "Sì / No", hi: "Hā̃ / Nahī̃"}, {it: "Come stai?", hi: "Aap kaise hain?"}, {it: "Sto bene", hi: "Maĩ ṭhīk hū̃"}] },
+                    { title: "Indicazioni e Trasporti", phrases: [{it: "Dov'è il bagno?", hi: "Bathroom kahā̃ hai?"}, {it: "Quanto costa?", hi: "Kitne kā hai?"}, {it: "È troppo caro!", hi: "Bahut mahngā hai!"}, {it: "Andiamo a...", hi: "...chalō"}] },
+                    { title: "Al Ristorante (Celiachia)", phrases: [{it: "Non posso mangiare grano", hi: "Maĩ gehū̃ nahī̃ khā saktā/saktī"}, {it: "Senza glutine", hi: "Gluten-mukt"}, {it: "Questo ha farina di grano?", hi: "Ismẽ gehū̃ kā āṭā hai?"}, {it: "Solo riso, per favore", hi: "Sirf chāval, kṛpayā"}] }
+                ]
+            },
+            calendar: {
+                title: "Calendario di Viaggio",
+                icon: "📅",
+                schedule: [
+                    { date: "3 Ago", city: "Delhi", activity: "Arrivo e primo contatto con la città." },
+                    { date: "4 Ago", city: "Agra / Jaipur", activity: "Visita di Agra (Taj Mahal) e treno serale per Jaipur." },
+                    { date: "5 Ago", city: "Jaipur", activity: "Esplorazione della 'Città Rosa': forti e palazzi." },
+                    { date: "6 Ago", city: "Jaipur", activity: "Immersione nell'artigianato e cultura locale." },
+                    { date: "7 Ago", city: "Pushkar", activity: "Trasferimento a Pushkar e cerimonia Aarti serale." },
+                    { date: "8 Ago", city: "Pushkar", activity: "Spiritualità sul lago sacro e safari nel deserto." },
+                    { date: "9 Ago", city: "Pushkar", activity: "Cultura locale, templi e relax." },
+                    { date: "10 Ago", city: "Udaipur", activity: "Lungo trasferimento a Udaipur, la 'Venezia d'Oriente'." },
+                    { date: "11 Ago", city: "Udaipur", activity: "Palazzi, laghi e il festival Hariyali Teej." },
+                    { date: "12 Ago", city: "Udaipur", activity: "Arte, natura e templi antichi nei dintorni." },
+                    { date: "13 Ago", city: "Udaipur", activity: "Benessere, shopping sostenibile e ultimo tramonto." },
+                    { date: "14 Ago", city: "Varanasi", activity: "Volo per Varanasi e suggestiva Ganga Aarti serale." },
+                    { date: "15 Ago", city: "Varanasi", activity: "Alba sul Gange, templi e Giorno dell'Indipendenza." },
+                    { date: "16 Ago", city: "Varanasi", activity: "Giro in barca all'alba ed escursione a Sarnath." },
+                    { date: "17 Ago", city: "Darjeeling", activity: "Volo per Bagdogra e trasferimento a Darjeeling." },
+                    { date: "18 Ago", city: "Darjeeling", activity: "Tè, treni a vapore d'epoca e cultura himalayana." },
+                    { date: "19 Ago", city: "Darjeeling", activity: "Monasteri tibetani e artigianato locale." },
+                    { date: "20 Ago", city: "Darjeeling", activity: "Natura, trekking leggero e relax in montagna." },
+                    { date: "21 Ago", city: "Delhi", activity: "Volo di ritorno a Delhi per le ultime notti." },
+                    { date: "22 Ago", city: "Delhi", activity: "Giornata libera per shopping finale ed esplorazioni." },
+                    { date: "23 Ago", city: "Delhi", activity: "Partenza e volo di ritorno per l'Italia." }
+                ]
+            },
+            // Dati specifici per ogni città
+            delhi: {
+                title: "Delhi", icon: "🏙️", subtitle: "Capitale vibrante, dove la storia Moghul incontra la modernità coloniale.",
+                weather: { temp: "28-35°C", condition: "Piogge sparse e alta umidità", icon: "fas fa-cloud-showers-heavy", tip: "Porta un ombrello e bevi molta acqua. Pianifica le visite all'aperto al mattino presto o nel tardo pomeriggio." },
+                timeline: [
+                    { day: "Giorno 1 (3 Ago)", title: "Arrivo e Primo Contatto", events: ["**05:55:** Arrivo all'aeroporto (DEL). Considera 1-2 ore per immigrazione e bagagli.","**Mattina:** Incontro con l'autista (1000 RPS + park), acquisto SIM (1200 RPS), trasferimento all'hotel **bloomrooms @ Janpath**.","**17:30:** Visita al **Gurudwara Bangla Sahib** e partecipazione al *langar*.", "**20:00:** Cena leggera e riposo."], locations: {"Gurudwara Bangla Sahib": "Gurudwara Bangla Sahib, New Delhi", "bloomrooms @ Janpath": "bloomrooms @ Janpath, New Delhi"} },
+                    { day: "Giorno 2 (4 Ago)", title: "Delhi Storica e Partenza", events: ["**06:00:** Giro in risciò a **Old Delhi** e visita alla **Jama Masjid**.","**08:10:** Treno **Gatimaan Express** da Hazrat Nizamuddin (NZM) per Agra (AGC), arrivo 09:50."], locations: {"Jama Masjid": "Jama Masjid, Delhi", "Hazrat Nizamuddin": "Hazrat Nizamuddin Railway Station, New Delhi"} },
+                    { day: "Giorno 19 (21 Ago)", title: "Ritorno a Delhi", events: ["**Sera:** Arrivo in aereo da Bagdogra e trasferimento all'hotel **Holiday Inn New Delhi Aerocity**."] , locations: {"Holiday Inn New Delhi Aerocity": "Holiday Inn New Delhi Aerocity"}},
+                    { day: "Giorno 20 (22 Ago)", title: "Esplorazioni Finali", events: ["**Mattina:** Giornata libera. Opzioni: **Tempio del Loto**, **Tomba di Humayun**.","**Pomeriggio:** Shopping al **Dilli Haat** o **Paharganj**.","**18:30:** Passeggiata all'**India Gate**.","**20:30:** Cena d'addio (*Indian Accent* o *Bukhara*)."], locations: {"Tempio del Loto": "Lotus Temple, New Delhi", "Tomba di Humayun": "Humayun's Tomb, New Delhi", "Dilli Haat": "Dilli Haat, INA, New Delhi", "India Gate": "India Gate, New Delhi", "Indian Accent": "Indian Accent, New Delhi", "Bukhara": "Bukhara, ITC Maurya, New Delhi"} },
+                    { day: "Giorno 21 (23 Ago)", title: "Partenza", events: ["**Mattina:** Ultimi acquisti o relax.","**Sera:** Trasferimento in aeroporto per il volo di ritorno."] }
+                ],
+                gastronomy: {
+                    glutenFree: [
+                        { name: "Saravana Bhavan", note: "Cucina del sud. **Masala Dosa** naturalmente senza glutine.", gf: "green", location: "Saravana Bhavan, Connaught Place, New Delhi" },
+                        { name: "Al Kailash Jain", note: "100% Jain. Possono preparare *besan roti* (pane di ceci) GF.", gf: "green", location: "Al Kailash Jain, Chandni Chowk, Delhi" },
+                        { name: "Veg Gulati", note: "Cucina vegetariana del nord. Famoso per il *Dal Makhani*. Molti piatti sono GF.", gf: "yellow", location: "Veg Gulati, Pandara Road, New Delhi"},
+                        { name: "Indian Accent", note: "Fine dining con menù degustazione adattabile per celiaci su richiesta.", gf: "yellow", location: "Indian Accent, The Lodhi, New Delhi"},
+                        { name: "Burma Burma", note: "Cucina birmana 100% vegetariana. Molti piatti a base di riso e legumi sono GF.", gf: "green", location: "Burma Burma, Saket, New Delhi"}
+                    ],
+                    standard: [
+                        { name: "Karim's", note: "Istituzione per kebab e korma. Molti curry sono GF, ma attenzione alla contaminazione.", gf: "yellow", location: "Karim's, Jama Masjid, Delhi" },
+                        { name: "Paranthe Wali Gali", note: "Storica via dei pani ripieni fritti.", gf: "red", location: "Paranthe Wali Gali, Chandni Chowk, Delhi" },
+                        { name: "Bille di Hatti", note: "Famoso per *Chole Bhature*. I ceci (*chole*) da soli sono GF, ma il pane no.", gf: "red", location: "Bille di Hatti, Kamla Nagar, Delhi"}
+                    ]
+                },
+                experiences: [
+                    { title: "Cooking Class in Old Delhi", description: "Corso di cucina casalinga con l'associazione Delhi Food Walks.", city: "Delhi", location: "Delhi Food Walks, Old Delhi" },
+                    { title: "Volontariato al Tempio", description: "Aiuta nella cucina del Gurudwara Bangla Sahib o nei giardini del Tempio del Loto.", city: "Delhi", location: "Gurudwara Bangla Sahib, New Delhi" },
+                    { title: "Qawwali Sufi", description: "Assisti ai canti spirituali sufi al Nizamuddin Dargah (il giovedì sera).", city: "Delhi", location: "Nizamuddin Dargah, New Delhi" },
+                    { title: "Heritage Walk con ONG", description: "Partecipa a un tour guidato da ex ragazzi di strada con Salaam Baalak Trust.", city: "Delhi", location: "Salaam Baalak Trust, New Delhi"}
+                ],
+                shopping: [
+                    { title: "Dilli Haat", description: "Mercato artigianale all'aperto con prodotti da tutta l'India. Prezzi equi e fissi.", location: "Dilli Haat, INA, New Delhi" },
+                    { title: "Khan Market", description: "Boutique di lusso, librerie storiche (Bahrisons) e negozi etici come Fabindia.", location: "Khan Market, New Delhi" },
+                    { title: "Chandni Chowk", description: "Un'immersione caotica nei mercati all'ingrosso di Old Delhi, dal mercato delle spezie (Khari Baoli) a quello dei tessuti.", location: "Chandni Chowk, Delhi" }
+                ],
+                transport: [
+                    { title: "Metro di Delhi", description: "Il modo più rapido ed efficiente per spostarsi su lunghe distanze. Pulita, sicura e con aria condizionata." },
+                    { title: "Auto-rickshaw (Tuk-tuk)", description: "Ideali per brevi tragitti. Contrattare sempre il prezzo prima di salire." },
+                    { title: "App (Ola/Uber)", description: "Convenienti e con prezzi trasparenti, un'ottima alternativa ai tuk-tuk tradizionali." }
+                ]
+            },
+            agra: {
+                title: "Agra", icon: "🕌", subtitle: "La città del Taj Mahal, simbolo eterno d'amore.",
+                weather: { temp: "28-34°C", condition: "Caldo umido con possibili temporali pomeridiani", icon: "fas fa-bolt", tip: "Visita il Taj Mahal all'alba per evitare il caldo e la folla. Il marmo può diventare scivoloso se bagnato." },
+                timeline: [
+                    { day: "Giorno 2 (4 Ago)", title: "Visita di Agra e Partenza per Jaipur", events: ["**09:50:** Arrivo ad Agra Cantt (AGC). Incontro con l'autista (5000 RPS).","**10:30:** Visita al **Taj Mahal**.","**12:30:** Pranzo solidale al **Sheroes' Hangout Café**.","**14:00:** Visita al **Forte di Agra**.","**16:00:** Visita alla **Tomba di Itimad-ud-Daulah** (Baby Taj).","**17:20:** Treno **KURJ UDZ EXP** da Agra Cantt (AGC) per Jaipur (JP), arrivo 22:30."], locations: {"Taj Mahal": "Taj Mahal, Agra", "Sheroes' Hangout Café": "Sheroes' Hangout, Agra", "Forte di Agra": "Agra Fort, Agra", "Tomba di Itimad-ud-Daulah": "Tomb of Itimad-ud-Daulah, Agra", "Agra Cantt": "Agra Cantt Railway Station"} }
+                ],
+                gastronomy: {
+                    glutenFree: [
+                        { name: "Dasaprakash", note: "Ristorante vegetariano del sud. Dosa e idli sono naturalmente GF.", gf: "green", location: "Dasaprakash Restaurant, Agra" },
+                        { name: "Petha", note: "Dolce tipico di zucca candita. Naturalmente senza glutine. Acquistalo da **Panchi Petha**.", gf: "green", location: "Panchi Petha, Agra" },
+                        { name: "Sheroes' Hangout Café", note: "Cucina semplice e solidale. Chiedete riso con dal per un'opzione GF.", gf: "yellow", location: "Sheroes' Hangout, Agra" }
+                    ],
+                    standard: [
+                        { name: "Pinch of Spice", note: "Ottima cucina Mughlai. Molti curry sono GF, ma attenzione alla contaminazione.", gf: "yellow", location: "Pinch of Spice, Agra"},
+                        { name: "Peshawri (ITC Mughal)", note: "Cucina tandoori di lusso. Molti piatti di carne e legumi sono naturalmente GF.", gf: "yellow", location: "Peshawri, ITC Mughal, Agra"},
+                        { name: "Bedai & Jalebi", note: "Colazione tipica di Agra, ma a base di farina di grano.", gf: "red", location: "Deviram Sweets, Agra"}
+                    ]
+                },
+                experiences: [
+                    { title: "Intarsio del Marmo", description: "Visita un laboratorio artigianale per vedere la tecnica della *pietra dura*, ereditata dai costruttori del Taj Mahal.", city: "Agra", location: "Subhash Emporium, Agra" },
+                    { title: "Vista al Tramonto", description: "Ammira il Taj Mahal dai giardini **Mehtab Bagh**, sulla riva opposta del fiume Yamuna.", city: "Agra", location: "Mehtab Bagh, Agra" },
+                    { title: "Corso di Cucina in Famiglia", description: "Impara le ricette Mughlai in una lezione casalinga in zona Taj Ganj.", city: "Agra", location: "Agra Cooking Class"}
+                ],
+                shopping: [
+                    { title: "Intarsio in Marmo", description: "Il souvenir per eccellenza. Cerca cooperative certificate come Subhash Emporium per acquisti etici.", location: "Gokul Pura Handicraft Bazaar, Agra" },
+                    { title: "Articoli in Pelle", description: "Sadar Bazaar è famoso per la pelletteria. Cerca i *jutti* (babbuce ricamate).", location: "Sadar Bazaar, Agra" }
+                ],
+                 transport: [
+                    { title: "Tuk-tuk", description: "Mezzo principale per spostarsi tra i monumenti. Una corsa dalla stazione al Taj costa circa 100-150 RPS." },
+                    { title: "Navette Elettriche", description: "Nell'area ecologica intorno al Taj Mahal, usa le navette gratuite o le carrozze a cavalli." }
+                ]
+            },
+            jaipur: {
+                title: "Jaipur", icon: "💖", subtitle: "La 'Città Rosa', capitale regale del Rajasthan.",
+                weather: { temp: "27-33°C", condition: "Acquazzoni intermittenti, ma spesso soleggiato", icon: "fas fa-cloud-sun-rain", tip: "I colori della Città Rosa sono ancora più vividi dopo un breve scroscio di pioggia. Tieni l'impermeabile a portata di mano." },
+                timeline: [
+                    { day: "Giorno 2 (4 Ago)", title: "Arrivo Serale", events: ["**22:30:** Arrivo alla stazione di Jaipur (JP) e check-in all'hotel **Umaid Bhawan**."], locations: {"Umaid Bhawan": "Umaid Bhawan Hotel Jaipur"} },
+                    { day: "Giorno 3 (5 Ago)", title: "Esplorazione della Città Rosa", events: ["**05:30:** Alba panoramica dal **Forte Nahargarh**.","**09:00:** Visita al **City Palace** e **Jantar Mantar**.","**15:00:** Fotografia dell'**Hawa Mahal**.","**19:00:** Cerimonia Aarti al **Tempio Govind Dev Ji**.","**20:30:** Cena con spettacolo di danza al **Spice Court**."], locations: {"Forte Nahargarh": "Nahargarh Fort, Jaipur", "City Palace": "City Palace, Jaipur", "Jantar Mantar": "Jantar Mantar, Jaipur", "Hawa Mahal": "Hawa Mahal, Jaipur", "Tempio Govind Dev Ji": "Govind Dev Ji Temple, Jaipur", "Spice Court": "Spice Court Restaurant, Jaipur"} },
+                    { day: "Giorno 4 (6 Ago)", title: "Fortezze e Arti", events: ["**08:00:** Visita al **Forte Amber** (sali in jeep).","**12:00:** Visita all'**Anokhi Museum of Hand Printing**.","**18:30:** Tramonto al **Jal Mahal** (Palazzo sull'Acqua)."], locations: {"Forte Amber": "Amber Fort, Jaipur", "Anokhi Museum": "Anokhi Museum of Hand Printing, Jaipur", "Jal Mahal": "Jal Mahal, Jaipur"} },
+                    { day: "Giorno 5 (7 Ago)", title: "Partenza per Pushkar", events: ["**Pomeriggio:** Partenza in auto per Pushkar (5000 RPS)."] }
+                ],
+                gastronomy: {
+                    glutenFree: [
+                        { name: "Spice Court", note: "Cucina rajasthani. Il **Gatte ki Sabzi** (gnocchetti di farina di ceci) è GF.", gf: "green", location: "Spice Court, Jaipur" },
+                        { name: "Anokhi Café", note: "Café biologico con molte opzioni GF e vegane, inclusi pane e dolci.", gf: "green", location: "Anokhi Cafe, Jaipur" },
+                        { name: "Lassiwala", note: "Il lassi più famoso di Jaipur, servito in bicchieri di terracotta. Naturalmente GF.", gf: "green", location: "Lassiwala, MI Road, Jaipur"},
+                        { name: "Masala Chowk", note: "Food court con street food igienico. Provate l'**aloo tiki chaat**.", gf: "yellow", location: "Masala Chowk, Jaipur" }
+                    ],
+                    standard: [
+                        { name: "Bar Palladio", note: "Cucina italiana. Spesso hanno pasta senza glutine su richiesta, ma l'ambiente è promiscuo.", gf: "yellow", location: "Bar Palladio, Jaipur" },
+                        { name: "Suvarna Mahal (Rambagh Palace)", note: "Fine dining regale. Menù degustazione adattabile per GF, ma costoso.", gf: "yellow", location: "Suvarna Mahal, Rambagh Palace, Jaipur"},
+                        { name: "Rawat Misthan Bhandar", note: "Famoso per Pyaaz Kachori e dolci. La maggior parte dei prodotti contiene grano.", gf: "red", location: "Rawat Misthan Bhandar, Jaipur"}
+                    ]
+                },
+                experiences: [
+                    { title: "Workshop di Stampa a Blocchi", description: "Impara l'arte tradizionale del block printing all'Anokhi Museum.", city: "Jaipur", location: "Anokhi Museum of Hand Printing, Jaipur" },
+                    { title: "Corso di Cucina Casalinga", description: "Un'esperienza immersiva per imparare i segreti della cucina rajasthani.", city: "Jaipur", location: "Jaipur Cooking Classes" },
+                    { title: "Spettacolo di Danza Kalbeliya", description: "Assisti alla sinuosa danza gitana del deserto durante una cena tradizionale.", city: "Jaipur", location: "Spice Court, Jaipur"},
+                    { title: "Visita all'ONG 'Ladli'", description: "Incontra e supporta i bambini di strada che creano gioielli artigianali.", city: "Jaipur", location: "Ladli Vocational Training Center, Jaipur"}
+                ],
+                shopping: [
+                    { title: "Johari Bazaar", description: "Il mercato dei gioiellieri, famoso per l'argento e le pietre preziose.", location: "Johari Bazaar, Jaipur" },
+                    { title: "Bapu Bazaar", description: "Ideale per tessuti, sciarpe stampate a mano e sandali in cuoio (*mojari*).", location: "Bapu Bazaar, Jaipur" },
+                    { title: "Ceramica Blu", description: "Cerca laboratori come il Kripal Kumbh per acquistare la tipica ceramica blu di Jaipur.", location: "Kripal Kumbh, Jaipur"}
+                ],
+                transport: [
+                    { title: "Tuk-tuk (con Ola Auto)", description: "Usa l'app Ola per chiamare tuk-tuk a tariffa fissa ed evitare contrattazioni." },
+                    { title: "Navette Elettriche", description: "Nel centro storico sono state introdotte navette gratuite per ridurre il traffico." }
+                ]
+            },
+            pushkar: {
+                title: "Pushkar", icon: "🕉️", subtitle: "Oasi spirituale, 100% vegetariana e senza alcol.",
+                weather: { temp: "26-32°C", condition: "Brevi acquazzoni rinfrescanti, paesaggio verdeggiante", icon: "fas fa-seedling", tip: "Pushkar è piccola e si gira a piedi. Un ombrello può servire anche come parasole tra un acquazzone e l'altro." },
+                timeline: [
+                    { day: "Giorno 5 (7 Ago)", title: "Arrivo", events: ["**Sera:** Arrivo a Pushkar e check-in all'**Hotel Rising Star**. Cena con vista sul lago da **Out of The Blue**."], locations: {"Out of The Blue": "Out of The Blue Cafe, Pushkar", "Hotel Rising Star": "Hotel Rising Star, Pushkar"} },
+                    { day: "Giorno 6 (8 Ago)", title: "Spiritualità e Deserto", events: ["**05:30:** Alba dal **Tempio di Savitri Mata**.","**09:00:** Visita al sacro **Tempio di Brahma**.","**16:30:** **Safari in cammello** al tramonto."], locations: {"Tempio di Savitri Mata": "Savitri Mata Temple, Pushkar", "Tempio di Brahma": "Brahma Temple, Pushkar", "Safari in cammello": "Pushkar Camel Safari"} },
+                    { day: "Giorno 7 (9 Ago)", title: "Cultura e Cerimonie", events: ["**Mattina:** Yoga all'alba e visita a templi meno noti.","**17:30:** Partecipa alla **Maha Aarti serale** al Varaha Ghat."], locations: {"Varaha Ghat": "Varaha Ghat, Pushkar"} },
+                    { day: "Giorno 8 (10 Ago)", title: "Partenza per Udaipur", events: ["**Mattina:** Partenza in auto per Udaipur (7500 RPS, viaggio lungo)."] }
+                ],
+                gastronomy: {
+                    glutenFree: [
+                        { name: "Honey & Spice", note: "Café salutista con torte e snack vegani e GF.", gf: "green", location: "Honey & Spice, Pushkar" },
+                        { name: "Ganga Laffa & Falafel", note: "Chiedi il 'falafel plate' senza pane laffa per un'opzione GF.", gf: "green", location: "Ganga Laffa & Falafel, Pushkar" },
+                        { name: "Pawan Restaurant", note: "Ristorante 100% vegano con molte opzioni crudiste e GF.", gf: "green", location: "Pawan Restaurant Pushkar"}
+                    ],
+                    standard: [
+                        { name: "Out Of The Blue", note: "Menù internazionale con opzioni GF su richiesta.", gf: "yellow", location: "Out of The Blue Cafe, Pushkar" },
+                        { name: "Sixth Sense", note: "Rooftop suggestivo con cucina indo-mediterranea.", gf: "yellow", location: "Sixth Sense, Inn Seventh Heaven, Pushkar"},
+                        { name: "La Pizzeria", note: "Pizza e hummus. Hanno base GF su richiesta.", gf: "yellow", location: "La Pizzeria, Pushkar"},
+                        { name: "Malpua", note: "Dolce tipico fritto.", gf: "red", location: "Pushkar Main Market" }
+                    ]
+                },
+                experiences: [
+                    { title: "Safari in Cammello", description: "Un'escursione indimenticabile tra le dune semi-desertiche al tramonto.", city: "Pushkar", location: "Pushkar Camel Safari" },
+                    { title: "Maha Aarti sul Lago", description: "Una cerimonia spirituale intensa e coinvolgente sulle rive del lago sacro.", city: "Pushkar", location: "Varaha Ghat, Pushkar" },
+                    { title: "Corso di Cucina Vegetariana", description: "Impara i segreti della cucina locale in una lezione casalinga.", city: "Pushkar", location: "Pushkar Cooking Art and Home Stay" }
+                ],
+                shopping: [
+                    { title: "Sadar Bazaar", description: "La via principale per abbigliamento in stile boho, gioielli in argento e artigianato.", location: "Sadar Bazaar, Pushkar" },
+                    { title: "Prodotti alla Rosa", description: "Pushkar è famosa per le rose. Cerca olio essenziale, acqua di rose e *gulkand* (marmellata di petali).", location: "Pushkar Rose Garden" }
+                ],
+                transport: [
+                    { title: "A Piedi", description: "Il centro di Pushkar è quasi interamente pedonale. È il modo migliore per esplorare." },
+                    { title: "E-rickshaw", description: "Per spostamenti leggermente più lunghi, usa i tuk-tuk elettrici a basso impatto ambientale." }
+                ]
+            },
+            udaipur: {
+                title: "Udaipur", icon: "🏰", subtitle: "La 'Venezia d'Oriente', con i suoi laghi e palazzi da sogno.",
+                weather: { temp: "24-30°C", condition: "Clima romantico con piogge e nebbia sui laghi", icon: "fas fa-water", tip: "Un giro in barca sul lago Pichola dopo un acquazzone regala riflessi e colori unici. Non farti scoraggiare dal meteo!" },
+                timeline: [
+                    { day: "Giorno 8 (10 Ago)", title: "Arrivo", events: ["**Sera:** Arrivo e check-in all'**Hostel Mantra**.","**19:00:** Spettacolo di danza 'Dharohar' a **Bagore Ki Haveli**."], locations: {"Bagore Ki Haveli": "Bagore Ki Haveli, Udaipur", "Hostel Mantra": "Hostel Mantra, Udaipur"} },
+                    { day: "Giorno 9 (11 Ago)", title: "Festival Hariyali Teej", events: ["**05:30:** Giro in barca all'alba sul **Lago Pichola**.","**09:30:** Cerimonie al **Tempio Jagdish** per Hariyali Teej.","**16:30:** Tour del maestoso **City Palace**."], locations: {"Lago Pichola": "Pichola Lake, Udaipur", "Tempio Jagdish": "Jagdish Temple, Udaipur", "City Palace": "City Palace, Udaipur"} },
+                    { day: "Giorno 10 (12 Ago)", title: "Arte e Natura", events: ["**05:15:** Alba a **Bahubali Hill** sul Lago Badi.","**09:30:** Visita ai templi di **Eklingji & Nagda**.","**17:30:** Tramonto dal **Monsoon Palace**."], locations: {"Bahubali Hill": "Bahubali Hills, Badi Lake, Udaipur", "Eklingji Temple": "Eklingji Temple, Udaipur", "Monsoon Palace": "Monsoon Palace, Sajjan Garh, Udaipur"} },
+                    { day: "Giorno 11 (13 Ago)", title: "Benessere", events: ["**07:00:** Yoga all'alba sui ghats.","**10:00:** Massaggio ayurvedico.","**18:00:** Ultimo tramonto da **Doodh Talai**."], locations: {"Doodh Talai": "Doodh Talai Lake, Udaipur"} },
+                    { day: "Giorno 12 (14 Ago)", title: "Partenza", events: ["**Pomeriggio:** Volo per Varanasi via Delhi."] }
+                ],
+                gastronomy: {
+                    glutenFree: [
+                        { name: "Millets of Mewar", note: "Cucina a base di miglio. Paradiso per celiaci e vegani.", gf: "green", location: "Millets of Mewar, Udaipur" },
+                        { name: "Bhutta (Mais arrosto)", note: "Snack di strada sicuro e GF, tipico dei monsoni.", gf: "green", location: "Fateh Sagar Lake, Udaipur" },
+                        { name: "Ambrai @ Amet Haveli", note: "Fine dining sul lago. Staff attento alle richieste GF.", gf: "yellow", location: "Ambrai Restaurant, Amet Haveli, Udaipur" },
+                        { name: "Upré by 1559 AD", note: "Rooftop panoramico con piatti fusion e tradizionali.", gf: "yellow", location: "Upre, Lake Pichola Hotel, Udaipur"}
+                    ],
+                    standard: [
+                        { name: "Natraj Dining Hall", note: "Autentico thali. Chiedere *bajra roti* (pane di miglio) GF, ma rischio contaminazione.", gf: "yellow", location: "Natraj Dining Hall, Udaipur" },
+                        { name: "Jagat Niwas Palace Rooftop", note: "Cucina multi-cuisine in un palazzo storico. Adattabile per GF.", gf: "yellow", location: "Jagat Niwas Palace Hotel, Udaipur"}
+                    ]
+                },
+                experiences: [
+                    { title: "Giro in Barca all'Alba", description: "Vivi la magia del Lago Pichola mentre la città si sveglia.", city: "Udaipur", location: "Pichola Lake, Udaipur" },
+                    { title: "Massaggio Ayurvedico", description: "Un trattamento rigenerante per alleviare la fatica del viaggio.", city: "Udaipur", location: "Ayurveda Ayurvedic Massage Centre, Udaipur" },
+                    { title: "Spettacolo 'Dharohar'", description: "Danze tradizionali e teatro dei burattini nella storica Bagore Ki Haveli.", city: "Udaipur", location: "Bagore Ki Haveli, Udaipur"}
+                ],
+                shopping: [
+                    { title: "Pittura Miniaturale", description: "Acquista acquerelli finissimi su carta e seta da gallerie come Gothwal Art.", location: "Gothwal Art, Udaipur" },
+                    { title: "Tessuti Equo-solidali", description: "Supporta le cooperative di donne locali acquistando da negozi come Sadhna.", location: "Sadhna Emporium, Udaipur" }
+                ],
+                transport: [
+                    { title: "A Piedi", description: "Il centro storico è un dedalo di vicoli perfetto da esplorare camminando." },
+                    { title: "Tuk-tuk", description: "Ideali per raggiungere punti più distanti come il Monsoon Palace o Saheliyon Ki Bari." }
+                ]
+            },
+            varanasi: {
+                title: "Varanasi", icon: "🔥", subtitle: "La città sacra sul Gange, dove vita e spiritualità si intrecciano.",
+                weather: { temp: "27-34°C", condition: "Molto umido con alta probabilità di pioggia. Il Gange è alto.", icon: "fas fa-tint", tip: "L'atmosfera è intensa e mistica. Un poncho è essenziale. La pioggia non ferma le cerimonie, anzi, le rende più suggestive." },
+                timeline: [
+                    { day: "Giorno 12 (14 Ago)", title: "Arrivo e Ganga Aarti", events: ["**16:20:** Arrivo in aereo a Varanasi. Check-in al **Wander Station Varanasi**.","**19:00:** Assisti alla cerimonia **Ganga Aarti** a Dashashwamedh Ghat."], locations: {"Dashashwamedh Ghat": "Dashashwamedh Ghat, Varanasi", "Wander Station Varanasi": "Wander Station Varanasi"} },
+                    { day: "Giorno 13 (15 Ago)", title: "Alba e Templi", events: ["**05:00:** Programma **Subah-e-Banaras** ad Assi Ghat.","**08:30:** Visita al **Tempio d'Oro (Kashi Vishwanath)**.","**10:00:** Passeggiata sui ghat, inclusa **Manikarnika Ghat** (vietato fotografare)."], locations: {"Assi Ghat": "Assi Ghat, Varanasi", "Kashi Vishwanath Temple": "Kashi Vishwanath Temple, Varanasi", "Manikarnika Ghat": "Manikarnika Ghat, Varanasi"} },
+                    { day: "Giorno 14 (16 Ago)", title: "Sarnath", events: ["**05:15:** Giro in barca all'alba sul Gange.","**08:30:** Escursione a **Sarnath**, luogo del primo sermone del Buddha."], locations: {"Sarnath": "Sarnath, Varanasi"} },
+                    { day: "Giorno 15 (17 Ago)", title: "Partenza", events: ["**Mattina:** Volo per Darjeeling via Kolkata."] }
+                ],
+                gastronomy: {
+                    glutenFree: [
+                        { name: "Blue Lassi Shop", note: "Lassi leggendario. Naturalmente GF.", gf: "green", location: "Blue Lassi Shop, Varanasi" },
+                        { name: "Dosa Café", note: "Cucina del sud 100% GF.", gf: "green", location: "Dosa Cafe, Varanasi" },
+                        { name: "Thandai", note: "Bevanda a base di latte e mandorle. GF.", gf: "green", location: "Godowlia Chowk, Varanasi" },
+                        { name: "Bowl of Compassion Café", note: "Cucina casalinga e solidale, molto attenta alle esigenze GF.", gf: "yellow", location: "Bowl of Compassion, Varanasi"}
+                    ],
+                    standard: [
+                        { name: "Kashi Chat Bhandar", note: "Prova il **Tamatar Chaat** (chiedi senza guarnizioni di grano).", gf: "yellow", location: "Kashi Chat Bhandar, Varanasi" },
+                        { name: "Ram Bhandar", note: "Famoso per Kachori Sabzi, a base di grano.", gf: "red", location: "Ram Bhandar, Thatheri Bazar, Varanasi"}
+                    ]
+                },
+                experiences: [
+                    { title: "Giro in Barca all'Alba", description: "Una prospettiva unica sui rituali mattutini dei ghats.", city: "Varanasi", location: "Ganges River, Varanasi" },
+                    { title: "Visita a Sarnath", description: "Un'immersione nella pace e nella storia del Buddhismo.", city: "Varanasi", location: "Sarnath, Varanasi" },
+                    { title: "Passeggiata sui Ghats", description: "Cammina da Assi a Manikarnika per osservare il ciclo della vita sul fiume sacro.", city: "Varanasi", location: "Varanasi Ghats" }
+                ],
+                shopping: [
+                    { title: "Sari di Seta Banarasi", description: "Visita un laboratorio nel quartiere dei tessitori per vedere la creazione di questi capolavori.", location: "Madanpura, Varanasi" },
+                    { title: "Articoli Spirituali", description: "Acquista mala (rosari), incensi e piccole statue in ottone nella Vishwanath Gali.", location: "Vishwanath Gali, Varanasi" }
+                ],
+                 transport: [
+                    { title: "A Piedi e Risciò a Pedali", description: "Nei vicoli stretti del centro, questi sono gli unici mezzi possibili." },
+                    { title: "Barca", description: "Usa le barche a remi non solo per i tour, ma anche come 'taxi d'acqua' per spostarti tra i ghats." }
+                ]
+            },
+            darjeeling: {
+                title: "Darjeeling", icon: "☕", subtitle: "La 'Regina delle Colline', famosa per il tè e l'Himalaya.",
+                weather: { temp: "15-22°C", condition: "Fresco, nebbioso e con piogge frequenti", icon: "fas fa-cloud-rain", tip: "Vesti a strati! Un maglione e un buon impermeabile sono indispensabili. La vista del Kanchenjunga è rara, ma la nebbia crea un'atmosfera magica." },
+                timeline: [
+                    { day: "Giorno 15 (17 Ago)", title: "Arrivo", events: ["**Sera:** Arrivo da Bagdogra (taxi 4000 RPS) e check-in all'**UDAAN Himalayan Suites and Spa**."], locations: {"UDAAN Himalayan Suites and Spa": "UDAAN Himalayan Suites and Spa, Darjeeling"} },
+                    { day: "Giorno 16 (18 Ago)", title: "Tè e Treni d'Epoca", events: ["**10:30:** Visita all'**Himalayan Mountaineering Institute** e **Padmaja Naidu Himalayan Zoological Park** (per vedere il **Panda Rosso**!).","**13:00:** Tour e degustazione alla **Happy Valley Tea Estate**.","**17:00:** Giro sul **Toy Train** (Patrimonio UNESCO)."], locations: {"Himalayan Mountaineering Institute": "Himalayan Mountaineering Institute, Darjeeling", "Padmaja Naidu Himalayan Zoological Park": "Padmaja Naidu Himalayan Zoological Park, Darjeeling", "Happy Valley Tea Estate": "Happy Valley Tea Estate, Darjeeling", "Darjeeling Himalayan Railway": "Darjeeling Himalayan Railway Station"} },
+                    { day: "Giorno 17 (19 Ago)", title: "Monasteri e Cultura Tibetana", events: ["**04:00 (Opzionale):** Alba a **Tiger Hill**.","**10:00:** Visita ai monasteri di **Ghoom** e **Dali**.","**14:00:** Visita al **Tibetan Refugee Self-Help Center**."], locations: {"Tiger Hill": "Tiger Hill, Darjeeling", "Ghoom Monastery": "Ghoom Monastery, Darjeeling", "Tibetan Refugee Self-Help Center": "Tibetan Refugee Self-Help Center, Darjeeling"} },
+                    { day: "Giorno 18 (20 Ago)", title: "Natura e Relax", events: ["**Mattina:** Trekking leggero o passeggiata al **Japanese Peace Pagoda**.","**Pomeriggio:** Shopping finale di tè."], locations: {"Japanese Peace Pagoda": "Japanese Peace Pagoda, Darjeeling"} },
+                    { day: "Giorno 19 (21 Ago)", title: "Ritorno a Delhi", events: ["**Mattina:** Trasferimento a Bagdogra (taxi 4000 RPS) e volo per Delhi."] }
+                ],
+                gastronomy: {
+                    glutenFree: [
+                        { name: "Sonam’s Kitchen", note: "Ottimo per brunch. Possono fare pancake di grano saraceno GF.", gf: "green", location: "Sonam's Kitchen, Darjeeling" },
+                        { name: "Alu Dum", note: "Snack di strada a base di patate speziate. Naturalmente GF.", gf: "green", location: "Chowrasta Mall, Darjeeling" },
+                        { name: "Sel Roti", note: "Ciambelle fritte di farina di riso, specialità nepalese. GF.", gf: "green", location: "Chowk Bazaar, Darjeeling" }
+                    ],
+                    standard: [
+                        { name: "Glenary’s", note: "Istituzione coloniale. Il ristorante può gestire richieste GF, ma la pasticceria è a base di grano.", gf: "yellow", location: "Glenary's, Darjeeling"},
+                        { name: "Kunga Restaurant", note: "Cucina tibetana. Chiedi la zuppa *thukpa* con noodles di riso. Evita i momos.", gf: "yellow", location: "Kunga Restaurant, Darjeeling" },
+                        { name: "Keventer's", note: "Famoso per colazioni inglesi (uova e bacon sono GF). Evita i panini.", gf: "yellow", location: "Keventer's, Darjeeling"}
+                    ]
+                },
+                experiences: [
+                    { title: "Giro sul Toy Train", description: "Un viaggio nostalgico su un treno a vapore d'epoca tra le colline del tè.", city: "Darjeeling", location: "Darjeeling Himalayan Railway Station" },
+                    { title: "Degustazione di Tè", description: "Scopri i segreti del famoso 'Champagne dei tè' direttamente alla fonte.", city: "Darjeeling", location: "Happy Valley Tea Estate, Darjeeling" },
+                    { title: "Vedere il Panda Rosso", description: "Visita lo zoo himalayano per ammirare questa specie rara e affascinante.", city: "Darjeeling", location: "Padmaja Naidu Himalayan Zoological Park, Darjeeling" },
+                    { title: "Visita ai Monasteri Tibetani", description: "Immergiti nella pace e nella spiritualità dei gompa di Ghoom e Dali.", city: "Darjeeling", location: "Ghoom Monastery, Darjeeling"}
+                ],
+                shopping: [
+                    { title: "Tè di Darjeeling", description: "Acquista tè autentico da boutique specializzate come Nathmull’s o Golden Tips.", location: "Nathmull's Tea & Sunset Lounge, Darjeeling" },
+                    { title: "Artigianato Tibetano", description: "Supporta la comunità di rifugiati acquistando tappeti, sciarpe e manufatti al Self-Help Center.", location: "Tibetan Refugee Self-Help Center, Darjeeling" }
+                ],
+                transport: [
+                    { title: "A Piedi", description: "Il modo migliore per esplorare il centro, con le sue salite e discese panoramiche." },
+                    { title: "Taxi Condivisi (Jeep)", description: "Mezzo economico e locale per raggiungere punti più distanti come Ghoom o Tiger Hill." }
+                ]
+            },
+            // Pagine informative statiche
+            info: { title: "Info Essenziali", icon: "ℹ️" },
+            celiac: { title: "Carta Celiachia", icon: "🚫" },
+            emergency: { title: "Emergenze", icon: "🆘" }
+        };
+        
+        // --- FUNZIONI DI UTILITÀ E RENDERIZZAZIONE ---
+
+        const mainContent = document.getElementById('main-content');
+        const navLinksContainer = document.getElementById('nav-links-container');
+        const sidebar = document.getElementById('sidebar');
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const backToTopBtn = document.getElementById('back-to-top');
+
+        /**
+         * Crea un link di ricerca per Google Maps.
+         * @param {string} location - La località da cercare.
+         * @returns {string} L'URL di Google Maps.
+         */
+        function createMapLink(location) {
+            return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
+        }
+
+        /**
+         * Converte un semplice markup in HTML (es. **bold** in <strong>).
+         * @param {string} text - Il testo da convertire.
+         * @returns {string} Il testo formattato in HTML.
+         */
+        function simpleMarkdownParse(text) {
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+        }
+
+        /**
+         * Renderizza la homepage.
+         */
+        function renderHomePage() {
+            const cities = Object.keys(travelData.home.images);
+            const randomCity = cities[Math.floor(Math.random() * cities.length)];
+            const randomTip = travelData.home.tips[Math.floor(Math.random() * travelData.home.tips.length)];
+            mainContent.innerHTML = `
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                    <div class="relative">
+                        <img src="${travelData.home.images[randomCity]}" alt="Immagine di ${randomCity}" class="w-full h-72 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/1200x400/f97316/ffffff?text=India';">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 p-6">
+                            <h2 class="text-4xl font-bold text-white mb-2">La Tua Guida Definitiva</h2>
+                            <p class="text-xl text-gray-200">India: 3–23 Agosto 2025</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="mt-2 text-lg">Preparati a un'avventura indimenticabile. Questa guida è il tuo assistente personale per un viaggio che bilancia monumenti iconici ed esperienze autentiche. Usa la navigazione per esplorare ogni tappa.</p>
+                        <div class="mt-6 text-left bg-orange-50 border-l-4 border-orange-500 p-4 rounded-r-lg">
+                            <h3 class="font-semibold text-orange-800 flex items-center"><i class="fas fa-lightbulb mr-2"></i>Consiglio del Giorno:</h3>
+                            <p class="text-orange-700 italic">"${randomTip}"</p>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        /**
+         * Crea i pulsanti delle tab per le pagine delle città.
+         * @param {object} city - L'oggetto dati della città.
+         * @returns {string} L'HTML per le tab.
+         */
+        function createTabs(city) {
+            const tabs = [ { id: 'timeline', icon: '🗓️', title: 'Itinerario' }, { id: 'gastronomy', icon: '🍛', title: 'Gastronomia' }, { id: 'experiences', icon: '✨', title: 'Esperienze' }, { id: 'shopping', icon: '🛍️', title: 'Shopping' }, { id: 'transport', icon: '🚗', title: 'Trasporti' } ];
+            let tabsHtml = '<div class="mb-4 border-b border-gray-200"><div class="flex -mb-px overflow-x-auto">';
+            tabs.forEach((tab, index) => {
+                if (city[tab.id]) {
+                    tabsHtml += `<button class="tab-button flex-shrink-0 text-gray-500 py-3 px-4 border-b-2 border-transparent text-sm font-medium hover:text-orange-600 ${index === 0 ? 'active' : ''}" data-tab="${tab.id}">${tab.icon} ${tab.title}</button>`;
+                }
+            });
+            tabsHtml += '</div></div>';
+            return tabsHtml;
+        }
+
+        /**
+         * Crea il contenuto HTML per una specifica tab di una città.
+         * @param {object} city - L'oggetto dati della città.
+         * @param {string} tabId - L'ID della tab da renderizzare.
+         * @returns {string} L'HTML del contenuto della tab.
+         */
+        function createContentForTab(city, tabId) {
+            const data = city[tabId];
+            if (!data) return '';
+            let content = '';
+            switch(tabId) {
+                case 'timeline':
+                    content = '<div class="space-y-6">';
+                    data.forEach(day => {
+                        let eventsHtml = day.events.map(event => {
+                            let eventText = simpleMarkdownParse(event);
+                            if (day.locations) {
+                                for (const [key, value] of Object.entries(day.locations)) {
+                                     const regex = new RegExp(`\\*\\*${key}\\*\\*`, 'g');
+                                     eventText = eventText.replace(regex, `<a href="${createMapLink(value)}" target="_blank" class="text-orange-600 font-semibold hover:underline"><strong>${key}</strong> <i class="fas fa-external-link-alt text-xs"></i></a>`);
+                                }
+                            }
+                            return `<li>${eventText}</li>`;
+                        }).join('');
+                        content += `<div class="border-l-4 border-orange-500 pl-4 py-2 bg-white rounded-r-lg shadow-sm"><h4 class="font-semibold text-lg text-gray-800">${simpleMarkdownParse(day.day)}: ${simpleMarkdownParse(day.title)}</h4><ul class="list-disc list-inside mt-2 text-gray-600 space-y-1">${eventsHtml}</ul></div>`;
+                    });
+                    content += '</div>';
+                    break;
+                case 'gastronomy':
+                    content = '<div>';
+                    if(data.glutenFree && data.glutenFree.length > 0) {
+                        content += '<h4 class="text-lg font-semibold text-green-700 mb-3"><i class="fas fa-check-circle mr-2"></i>Consigliati Senza Glutine</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
+                        data.glutenFree.forEach(item => {
+                            const title = item.location ? `<a href="${createMapLink(item.location)}" target="_blank" class="text-gray-800 hover:text-orange-600">${simpleMarkdownParse(item.name)} <i class="fas fa-map-marker-alt text-xs"></i></a>` : simpleMarkdownParse(item.name);
+                            content += `<div class="bg-green-50 p-4 rounded-lg border border-green-200 hover:shadow-md transition-shadow"><h4 class="font-semibold flex items-center"><span class="w-3 h-3 rounded-full mr-2 bg-green-200 border border-green-400"></span>${title}</h4><p class="text-gray-600 text-sm mt-1 pl-5">${simpleMarkdownParse(item.note)}</p></div>`;
+                        });
+                        content += '</div>';
+                    }
+                    if(data.standard && data.standard.length > 0) {
+                        content += '<h4 class="text-lg font-semibold text-red-700 mt-6 mb-3"><i class="fas fa-exclamation-triangle mr-2"></i>Standard (Rischio Contaminazione o Glutine)</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
+                        data.standard.forEach(item => {
+                            const title = item.location ? `<a href="${createMapLink(item.location)}" target="_blank" class="text-gray-800 hover:text-orange-600">${simpleMarkdownParse(item.name)} <i class="fas fa-map-marker-alt text-xs"></i></a>` : simpleMarkdownParse(item.name);
+                            const colorClass = item.gf === 'yellow' ? 'yellow' : 'red';
+                            content += `<div class="bg-${colorClass}-50 p-4 rounded-lg border border-${colorClass}-200 hover:shadow-md transition-shadow"><h4 class="font-semibold flex items-center"><span class="w-3 h-3 rounded-full mr-2 bg-${colorClass}-200 border border-${colorClass}-400"></span>${title}</h4><p class="text-gray-600 text-sm mt-1 pl-5">${simpleMarkdownParse(item.note)}</p></div>`;
+                        });
+                        content += '</div>';
+                    }
+                    content += '</div>';
+                    break;
+                case 'experiences':
+                    const generalSearchHtml = `
+                        <div class="bg-gray-50 rounded-lg p-4 mb-6 border">
+                            <h4 class="font-semibold text-lg text-gray-800 mb-3">Esplora liberamente</h4>
+                            <p class="text-sm text-gray-600 mb-4">Cerca altre attività ed esperienze disponibili a ${city.title} durante la tua visita.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <a href="https://www.google.com/search?q=esperienze+a+${encodeURIComponent(city.title)}" target="_blank" class="text-sm bg-blue-500 text-white px-3 py-1 rounded-full hover:bg-blue-600 transition"><i class="fab fa-google mr-1"></i> Google</a>
+                                <a href="https://www.viator.com/it-IT/search/${encodeURIComponent(city.title)}" target="_blank" class="text-sm bg-green-500 text-white px-3 py-1 rounded-full hover:bg-green-600 transition"><i class="fas fa-ticket-alt mr-1"></i> Viator</a>
+                                <a href="https://www.getyourguide.it/s/?q=${encodeURIComponent(city.title)}" target="_blank" class="text-sm bg-orange-500 text-white px-3 py-1 rounded-full hover:bg-orange-600 transition"><i class="fas fa-compass mr-1"></i> GetYourGuide</a>
+                                <a href="https://www.airbnb.it/s/${encodeURIComponent(city.title)}--India/experiences" target="_blank" class="text-sm bg-red-500 text-white px-3 py-1 rounded-full hover:bg-red-600 transition"><i class="fab fa-airbnb mr-1"></i> Airbnb</a>
+                            </div>
+                        </div>
+                        <h4 class="font-semibold text-xl text-gray-800 mb-4 pt-4 border-t">Le nostre esperienze consigliate</h4>
+                    `;
+                    
+                    let specificExperiencesHtml = '<div class="space-y-4">';
+                    data.forEach(item => {
+                        const searchQuery = encodeURIComponent(item.title + ' ' + item.city);
+                        const title = item.location ? `<a href="${createMapLink(item.location)}" target="_blank" class="text-gray-800 hover:text-orange-600">${simpleMarkdownParse(item.title)} <i class="fas fa-map-marker-alt text-xs"></i></a>` : simpleMarkdownParse(item.title);
+                        specificExperiencesHtml += `
+                            <div class="bg-white rounded-lg border p-4 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-px">
+                                <h4 class="font-semibold text-xl text-gray-800">${title}</h4>
+                                <p class="text-gray-600 my-2">${simpleMarkdownParse(item.description)}</p>
+                                <div class="flex flex-wrap gap-2 mt-3 border-t pt-3">
+                                    <a href="https://www.google.com/search?q=${searchQuery}" target="_blank" class="text-sm bg-blue-500 text-white px-3 py-1 rounded-full hover:bg-blue-600 transition"><i class="fab fa-google mr-1"></i> Google</a>
+                                    <a href="https://www.viator.com/it-IT/search/${searchQuery}" target="_blank" class="text-sm bg-green-500 text-white px-3 py-1 rounded-full hover:bg-green-600 transition"><i class="fas fa-ticket-alt mr-1"></i> Viator</a>
+                                    <a href="https://www.getyourguide.it/s/?q=${searchQuery}" target="_blank" class="text-sm bg-orange-500 text-white px-3 py-1 rounded-full hover:bg-orange-600 transition"><i class="fas fa-compass mr-1"></i> GetYourGuide</a>
+                                    <a href="https://www.airbnb.it/s/${searchQuery}/experiences" target="_blank" class="text-sm bg-red-500 text-white px-3 py-1 rounded-full hover:bg-red-600 transition"><i class="fab fa-airbnb mr-1"></i> Airbnb</a>
+                                </div>
+                            </div>`;
+                    });
+                    specificExperiencesHtml += '</div>';
+                    
+                    content = `<div>${generalSearchHtml}${specificExperiencesHtml}</div>`;
+                    break;
+                case 'shopping': case 'transport':
+                    content = '<div class="space-y-4">';
+                    data.forEach(item => {
+                        const title = item.location ? `<a href="${createMapLink(item.location)}" target="_blank" class="text-gray-800 hover:text-orange-600">${simpleMarkdownParse(item.title)} <i class="fas fa-external-link-alt text-xs"></i></a>` : simpleMarkdownParse(item.title);
+                        content += `<div class="bg-white rounded-lg border p-4 transition-all duration-300 hover:shadow-lg hover:-translate-y-px"><h4 class="font-semibold text-gray-800">${title}</h4><p class="text-gray-600 text-sm mt-1">${simpleMarkdownParse(item.description)}</p></div>`;
+                    });
+                    content += '</div>';
+                    break;
+            }
+            return `<div id="${tabId}-content" class="tab-content">${content}</div>`;
+        }
+        
+        /**
+         * Renderizza la pagina di una città con le sue tab.
+         * @param {string} cityKey - La chiave della città nell'oggetto travelData.
+         */
+        function renderCityPage(cityKey) {
+            const city = travelData[cityKey];
+            let content = `
+                <div class="text-center mb-6">
+                    <h2 class="text-4xl font-bold border-b pb-2">${city.icon} ${city.title}</h2>
+                    <p class="text-lg text-gray-500 mt-2">${city.subtitle}</p>
+                </div>
+                <div class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-r-lg mb-6 flex items-start gap-3">
+                    <i class="${city.weather.icon} text-2xl text-orange-500 mt-1"></i>
+                    <div>
+                        <h3 class="font-semibold text-orange-800">Meteo e Consigli (${city.weather.temp})</h3>
+                        <p class="text-orange-700">${city.weather.condition}. ${city.weather.tip}</p>
+                    </div>
+                </div>
+                <div class="bg-white p-4 sm:p-6 rounded-xl shadow-lg">
+                    ${createTabs(city)}
+                    <div id="tab-content-container">
+                        ${createContentForTab(city, 'timeline')}
+                        ${createContentForTab(city, 'gastronomy')}
+                        ${createContentForTab(city, 'experiences')}
+                        ${createContentForTab(city, 'shopping')}
+                        ${createContentForTab(city, 'transport')}
+                    </div>
+                </div>
+            `;
+            mainContent.innerHTML = content;
+            document.querySelector('.tab-content').classList.add('active');
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.dataset.tab;
+                    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    document.getElementById(tabId + '-content').classList.add('active');
+                });
+            });
+        }
+        
+        function renderCalendarPage() {
+            const { icon, title, schedule } = travelData.calendar;
+            let scheduleHtml = '<div class="space-y-2">';
+            schedule.forEach(item => {
+                scheduleHtml += `<div class="flex items-start p-3 bg-white rounded-lg shadow-sm transition-all duration-300 hover:shadow-md hover:bg-orange-50"><div class="text-center mr-4 w-16 flex-shrink-0"><div class="text-sm font-bold text-orange-600">${item.date.split(' ')[1]}</div><div class="text-2xl font-bold text-gray-700">${item.date.split(' ')[0]}</div></div><div class="border-l-2 border-gray-200 pl-4 flex-1"><h4 class="font-semibold text-gray-800">${item.city}</h4><p class="text-gray-600 text-sm">${item.activity}</p></div></div>`;
+            });
+            scheduleHtml += '</div>';
+            mainContent.innerHTML = `<div class="text-center mb-6"><h2 class="text-4xl font-bold border-b pb-2">${icon} ${title}</h2></div><div class="bg-white p-4 sm:p-6 rounded-xl shadow-lg">${scheduleHtml}</div>`;
+        }
+
+        function renderMonumentsPage() {
+            const { icon, title, cities } = travelData.monuments;
+            let citiesHtml = '<div class="space-y-6">';
+            cities.forEach(city => {
+                citiesHtml += `<div><h3 class="text-2xl font-bold mb-3 text-orange-700">${city.name}</h3><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">`;
+                city.places.forEach(place => {
+                    citiesHtml += `<a href="${createMapLink(place + ', ' + city.name)}" target="_blank" class="block bg-white p-4 rounded-lg shadow-sm hover:shadow-lg hover:text-orange-600 transition-all duration-300 hover:-translate-y-1 font-medium text-gray-700">${place} <i class="fas fa-external-link-alt text-xs ml-1"></i></a>`;
+                });
+                citiesHtml += `</div></div>`;
+            });
+            citiesHtml += '</div>';
+            mainContent.innerHTML = `<div class="text-center mb-6"><h2 class="text-4xl font-bold border-b pb-2">${icon} ${title}</h2></div>${citiesHtml}`;
+        }
+
+        function renderHotelsPage() {
+            const { icon, title, bookings } = travelData.hotels;
+            let bookingsHtml = '<div class="space-y-4">';
+            bookings.forEach(hotel => {
+                let detailsHtml = '';
+                if (hotel.confirmation || hotel.voucher) {
+                    detailsHtml += `<div class="bg-gray-50 px-4 py-3 border-t grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-sm">`;
+                    if (hotel.source) {
+                         detailsHtml += `<div><span class="font-semibold text-gray-500">Fonte:</span> <span class="text-gray-800">${hotel.source}</span></div>`;
+                    }
+                    if (hotel.confirmation) {
+                        detailsHtml += `<div><span class="font-semibold text-gray-500">N° Conferma:</span> <span class="text-gray-800">${hotel.confirmation}</span></div>`;
+                    }
+                    if (hotel.pin) {
+                        detailsHtml += `<div><span class="font-semibold text-gray-500">Codice PIN:</span> <span class="text-gray-800 font-bold">${hotel.pin}</span></div>`;
+                    }
+                    if (hotel.bookingRef) {
+                        detailsHtml += `<div><span class="font-semibold text-gray-500">Rif. Prenotazione:</span> <span class="text-gray-800">${hotel.bookingRef}</span></div>`;
+                    }
+                    if (hotel.voucher) {
+                        detailsHtml += `<div class="sm:col-span-2"><span class="font-semibold text-gray-500">Voucher No.:</span> <span class="text-gray-800">${hotel.voucher}</span></div>`;
+                    }
+                     if (hotel.notes) {
+                        detailsHtml += `<div class="sm:col-span-2 mt-2 pt-2 border-t border-gray-200"><p class="text-green-600 font-semibold">${hotel.notes}</p></div>`;
+                    }
+                    detailsHtml += `</div>`;
+                }
+
+                bookingsHtml += `
+                    <div class="bg-white rounded-lg shadow-sm border overflow-hidden transition-all duration-300 hover:shadow-xl">
+                        <div class="p-4">
+                            <h3 class="text-xl font-bold text-gray-800">${hotel.name}</h3>
+                            <p class="text-sm text-gray-500">${hotel.city}</p>
+                            <p class="text-sm font-semibold text-orange-600 mt-2">${hotel.dates}</p>
+                        </div>
+                        ${detailsHtml}
+                        <a href="${hotel.mapLink}" target="_blank" class="block bg-blue-500 p-3 text-center text-white font-semibold hover:bg-blue-600 transition">
+                            <i class="fas fa-map-marked-alt mr-2"></i>Mostra sulla Mappa
+                        </a>
+                    </div>
+                `;
+            });
+            bookingsHtml += '</div>';
+            mainContent.innerHTML = `<div class="text-center mb-6"><h2 class="text-4xl font-bold border-b pb-2">${icon} ${title}</h2></div>${bookingsHtml}`;
+        }
+
+        function renderChecklistPage() {
+            const { icon, title, categories } = travelData.checklist;
+            const savedChecks = JSON.parse(localStorage.getItem('checklistState')) || {};
+            let categoriesHtml = '<div class="space-y-6">';
+            categories.forEach(cat => {
+                categoriesHtml += `<div><h3 class="text-xl font-semibold mb-3 text-orange-600">${cat.title}</h3><div class="space-y-2">`;
+                cat.items.forEach((item, index) => {
+                    const itemId = `${cat.title.replace(/\s+/g, '-')}-${index}`;
+                    const isChecked = savedChecks[itemId] ? 'checked' : '';
+                    categoriesHtml += `<label class="flex items-center bg-white p-3 rounded-lg shadow-sm hover:bg-gray-50 cursor-pointer transition-all duration-200"><input type="checkbox" data-id="${itemId}" class="checklist-item h-5 w-5 rounded border-gray-300 text-orange-600 focus:ring-orange-500 mr-3" ${isChecked}><span class="text-gray-700">${item}</span></label>`;
+                });
+                categoriesHtml += `</div></div>`;
+            });
+            categoriesHtml += '</div>';
+            mainContent.innerHTML = `<div class="text-center mb-6"><h2 class="text-4xl font-bold border-b pb-2">${icon} ${title}</h2></div>${categoriesHtml}`;
+            
+            // Aggiunge gli event listener per salvare lo stato della checklist
+            document.querySelectorAll('.checklist-item').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const saved = JSON.parse(localStorage.getItem('checklistState')) || {};
+                    saved[e.target.dataset.id] = e.target.checked;
+                    localStorage.setItem('checklistState', JSON.stringify(saved));
+                });
+            });
+        }
+        
+        function renderPhrasebookPage() {
+             const { icon, title, categories } = travelData.phrasebook;
+             let categoriesHtml = '<div class="space-y-6">';
+             categories.forEach(cat => {
+                categoriesHtml += `<div><h3 class="text-xl font-semibold mb-3 text-orange-600">${cat.title}</h3><div class="bg-white rounded-lg shadow-sm divide-y">`;
+                cat.phrases.forEach(phrase => {
+                    categoriesHtml += `<div class="p-3 grid grid-cols-2 gap-4 items-center"><p class="text-gray-700">${phrase.it}</p><p class="text-gray-900 font-medium text-right">${phrase.hi}</p></div>`;
+                });
+                categoriesHtml += `</div></div>`;
+             });
+             categoriesHtml += '</div>';
+             mainContent.innerHTML = `<div class="text-center mb-6"><h2 class="text-4xl font-bold border-b pb-2">${icon} ${title}</h2></div>${categoriesHtml}`;
+        }
+
+        function renderInfoPage(pageKey) {
+            const page = travelData[pageKey];
+            const fullContent = {
+                 info: `<div class="bg-white rounded-xl shadow-lg p-6 space-y-4"><div><h3 class="text-xl font-semibold mb-2 text-orange-600 flex items-center"><i class="fas fa-wifi mr-2"></i>SIM & Connettività</h3><p>Acquista una SIM locale (Jio o Airtel) all'arrivo per una connettività economica e affidabile. Il Wi-Fi pubblico è spesso instabile.</p></div><div class="border-t my-4"></div><div><h3 class="text-xl font-semibold mb-2 text-orange-600 flex items-center"><i class="fas fa-money-bill-wave mr-2"></i>Valuta</h3><p>La moneta è la Rupia Indiana (INR). 1 € ≈ 95-100 ₹. Cambia in uffici autorizzati e preleva da ATM sicuri. Porta sempre con te del contante per piccole spese, mance e mercati.</p></div><div class="border-t my-4"></div><div><h3 class="text-xl font-semibold mb-2 text-orange-600 flex items-center"><i class="fas fa-first-aid mr-2"></i>Salute & Vaccini</h3><p>Vaccinazioni consigliate (non obbligatorie): Epatite A, Tifo, Tetano. Porta un kit medico di base con antidiarroici, antipiretici e repellente per zanzare. Bevi solo acqua imbottigliata.</p></div><div class="border-t my-4"></div><div><h3 class="text-xl font-semibold mb-2 text-orange-600 flex items-center"><i class="fas fa-hands-praying mr-2"></i>Cultura & Comportamento</h3><p>Vesti in modo sobrio, coprendo spalle e ginocchia nei luoghi sacri. Usa la mano destra per dare e ricevere. Un saluto "Namasté" è sempre apprezzato. Togli le scarpe prima di entrare in templi e case.</p></div><div class="border-t my-4"></div><div><h3 class="text-xl font-semibold mb-2 text-orange-600 flex items-center"><i class="fas fa-leaf mr-2"></i>Sostenibilità</h3><p>Porta una borraccia riutilizzabile. Preferisci trasporti collettivi. Supporta l'economia locale acquistando da artigiani e cooperative. Evita i giri turistici su elefanti per motivi etici.</p></div></div>`,
+                 celiac: `<div class="bg-white rounded-xl shadow-lg p-6"><h3 class="text-xl font-semibold mb-2 text-orange-600">ITALIANO</h3><div class="bg-gray-50 p-4 rounded-lg border"><p><strong>IMPORTANTE:</strong> Sono celiaco/a. Mangiare anche una piccolissima quantità di glutine mi provoca una reazione grave. Il glutine si trova in <strong>GRANO (frumento, atta, maida, sooji/semola), ORZO, SEGALE</strong>.</p><p class="mt-2"><strong>NON POSSO MANGIARE:</strong> Pane (roti, chapati, naan, paratha, poori), pasta, noodles, cibi impanati o fritti in olio contaminato, salse addensate con farina.</p><p class="mt-2"><strong>POSSO MANGIARE:</strong> Riso, lenticchie (dal), verdure, frutta, carne/pesce/pollo alla griglia, uova, formaggio (paneer), yogurt. Cibi fatti con farina di riso, ceci (besan), mais o miglio (bajra, jowar, ragi). Dosa e Idli (se puri).</p><p class="mt-2"><strong>MOLTO IMPORTANTE:</strong> Usare utensili e superfici pulite e separate. Usare olio fresco. Grazie per la vostra attenzione!</p></div><h3 class="text-xl font-semibold mt-6 mb-2 text-orange-600">HINDI (हिंदी)</h3><div class="bg-gray-50 p-4 rounded-lg border relative"><button id="copy-btn" class="absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded-md text-sm hover:bg-orange-600"><i class="fas fa-copy mr-1"></i> Copia</button><p id="hindi-text" class="text-lg"><strong>महत्वपूर्ण:</strong> मुझे सीलिएक रोग है। अगर मैं थोड़ा भी ग्लूटेन खा लूं, तो मुझे गंभीर बीमारी हो जाती है। ग्लूटेन <strong>गेहूं (आटा, मैदा, सूजी), जौ, राई</strong> में पाया जाता है।<br><br><strong>मैं यह नहीं खा सकता/सकती:</strong> कोई भी ब्रेड (रोटी, चपाती, नान, पराठा, पूरी), पास्ता, नूडल्स, तले हुए खाद्य पदार्थ, या सॉस जिसमें आटा हो।<br><br><strong>मैं यह खा सकता/सकती हूँ:</strong> चावल, दाल, सब्जियां, फल, ग्रिल्ड मांस/मछली/चिकन, अंडे, पनीर, दही। चावल का आटा, बेसन, मक्का, या बाजरा से बनी चीजें।<br><br><strong>कृपया ध्यान दें:</strong> मेरा खाना अलग, साफ बर्तनों में बनाएं। ताजा तेल का प्रयोग करें। आपकी मदद के लिए धन्यवाद!</p></div></div>`,
+                 emergency: `<div class="bg-white rounded-xl shadow-lg p-6 space-y-4"><div><h3 class="text-xl font-semibold mb-2 text-red-600">Numeri Nazionali</h3><ul class="list-disc list-inside space-y-1"><li><strong>Numero Unico Emergenze:</strong> 112</li><li><strong>Helpline Turistica 24/7:</strong> 1363</li></ul></div><div class="border-t my-4"></div><div><h3 class="text-xl font-semibold mb-2 text-red-600">Supporto Consolare</h3><ul class="list-disc list-inside space-y-1"><li><strong>Ambasciata d'Italia a New Delhi:</strong> +91 11 26114355</li><li><strong>Cellulare Emergenze Ambasciata:</strong> +91 9810158737</li></ul></div><div class="border-t my-4"></div><div><h3 class="text-xl font-semibold mb-2 text-red-600">Consigli Pratici</h3><ul class="list-disc list-inside space-y-1"><li>Registra il tuo viaggio su <strong>"DoveSiamoNelMondo"</strong>.</li><li>Porta sempre con te una copia dei documenti e i dettagli dell'assicurazione di viaggio.</li><li>Tieni una lista di ospedali privati affidabili per ogni città (es. Max Healthcare a Delhi, Fortis a Jaipur).</li></ul></div></div>`
+            };
+            mainContent.innerHTML = `<div class="text-center mb-6"><h2 class="text-4xl font-bold border-b pb-2">${page.icon} ${page.title}</h2></div>${fullContent[pageKey]}`;
+            if (pageKey === 'celiac') {
+                document.getElementById('copy-btn').addEventListener('click', () => {
+                    const textToCopy = document.getElementById('hindi-text').innerText;
+                    const textArea = document.createElement('textarea');
+                    textArea.value = textToCopy;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        const copyBtn = document.getElementById('copy-btn');
+                        copyBtn.innerHTML = '<i class="fas fa-check mr-1"></i> Copiato!';
+                        copyBtn.classList.add('bg-green-500', 'hover:bg-green-600');
+                        copyBtn.classList.remove('bg-orange-500', 'hover:bg-orange-600');
+                        setTimeout(() => { 
+                            copyBtn.innerHTML = '<i class="fas fa-copy mr-1"></i> Copia';
+                            copyBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+                            copyBtn.classList.add('bg-orange-500', 'hover:bg-orange-600');
+                        }, 2000);
+                    } catch (err) { console.error('Impossibile copiare il testo: ', err); }
+                    document.body.removeChild(textArea);
+                });
+            }
+        }
+
+        /**
+         * Gestisce la navigazione tra le pagine.
+         * @param {string} pageKey - La chiave della pagina da visualizzare.
+         */
+        function navigateTo(pageKey) {
+            mainContent.innerHTML = ''; // Svuota il contenuto per un effetto di transizione
+            setTimeout(() => {
+                // Seleziona la funzione di renderizzazione corretta in base alla chiave
+                if (pageKey === 'home') renderHomePage();
+                else if (pageKey === 'calendar') renderCalendarPage();
+                else if (pageKey === 'monuments') renderMonumentsPage();
+                else if (pageKey === 'hotels') renderHotelsPage();
+                else if (pageKey === 'checklist') renderChecklistPage();
+                else if (pageKey === 'phrasebook') renderPhrasebookPage();
+                else if (travelData[pageKey] && (pageKey === 'info' || pageKey === 'celiac' || pageKey === 'emergency')) renderInfoPage(pageKey);
+                else if (travelData[pageKey]) renderCityPage(pageKey);
+                
+                // Applica l'effetto di fade-in
+                mainContent.classList.add('fade-in');
+                mainContent.addEventListener('animationend', () => mainContent.classList.remove('fade-in'), { once: true });
+                
+                // Aggiorna lo stato attivo del link di navigazione
+                document.querySelectorAll('.nav-link').forEach(link => link.classList.toggle('active', link.dataset.page === pageKey));
+                
+                // Chiude il menu mobile dopo la navigazione
+                closeMobileMenu();
+                
+                // Torna all'inizio della pagina
+                window.scrollTo(0, 0);
+            }, 50); // Un piccolo ritardo per migliorare la percezione della transizione
+        }
+
+        function openMobileMenu() {
+            sidebar.classList.remove('-translate-x-full');
+            mobileMenuOverlay.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden', 'md:overflow-auto');
+        }
+
+        function closeMobileMenu() {
+            sidebar.classList.add('-translate-x-full');
+            mobileMenuOverlay.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden', 'md:overflow-auto');
+        }
+
+        /**
+         * Inizializza l'applicazione.
+         */
+        function initializeApp() {
+            // Ordine di visualizzazione dei link nella navigazione
+            const navOrder = ['home', 'calendar', 'hotels', 'monuments', 'delhi', 'agra', 'jaipur', 'pushkar', 'udaipur', 'varanasi', 'darjeeling', 'checklist', 'phrasebook', 'info', 'celiac', 'emergency'];
+            navOrder.forEach(key => {
+                const page = travelData[key];
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="#" class="nav-link block w-full text-left px-4 py-2 rounded-md transition-colors duration-200" data-page="${key}">${page.icon || '🏠'} ${page.title}</a>`;
+                navLinksContainer.appendChild(li);
+            });
+            
+            // --- EVENT LISTENERS ---
+            navLinksContainer.addEventListener('click', (e) => {
+                e.preventDefault();
+                const link = e.target.closest('.nav-link');
+                if (link) navigateTo(link.dataset.page);
+            });
+            
+            // Gestione del menu mobile
+            menuBtn.addEventListener('click', openMobileMenu);
+            closeMenuBtn.addEventListener('click', closeMobileMenu);
+            mobileMenuOverlay.addEventListener('click', closeMobileMenu);
+
+            // Logica del pulsante "Torna su"
+            window.onscroll = () => {
+                if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                    backToTopBtn.style.display = "block";
+                } else {
+                    backToTopBtn.style.display = "none";
+                }
+            };
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            });
+
+            // Carica la pagina iniziale
+            navigateTo('home');
+        }
+
+        // Avvia l'app quando il DOM è completamente caricato
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
